@@ -20,6 +20,13 @@ interface StateClass<ValueType> {
 
 type setStateFunc<ValueType> = (state: ValueType) => ValueType
 
+type InternalInformation<ValueType> = {
+    name?: string
+    value: ValueType
+    initialValue: ValueType
+    previousState: ValueType
+}
+
 export default class State<StateType = any> implements StateClass<StateType> {
     //this is the method to recognizes the state
     public name: string
@@ -29,9 +36,13 @@ export default class State<StateType = any> implements StateClass<StateType> {
     //collection of function that will run after the state changes
     private _watchers: Record<string, Function>
 
+    //this the required history of the State
+    private _history: InternalInformation<StateType>
+
     //set the state name
     public key(stateName: string) {
         if (!this.name) this.name = stateName
+        this._history.name = stateName
         return this
     }
 
@@ -48,8 +59,11 @@ export default class State<StateType = any> implements StateClass<StateType> {
         } else if (typeof newState === "function") {
             newState = (newState as setStateFunc<StateType>)(this._value)
         }
+        let prevState = copy(this._value)
         this._value = newState as StateType
-        this.fireWatchers()
+        this._history.previousState = prevState
+        this._history.value = this._value
+        this._fireWatchers()
         return this
     }
 
@@ -60,18 +74,23 @@ export default class State<StateType = any> implements StateClass<StateType> {
 
     constructor(initialState: StateType) {
         this._value = initialState
+        this._history = {
+            value: this._value,
+            initialValue: initialState,
+            previousState: null
+        }
     }
 
     //patch state objects together
     public patch(targetToChange, config: { deep?: boolean } = {}) {
         if (!(typeof this._value === 'object') || !(typeof targetToChange === "object")) return this
         this.set(config.deep ? shallowMerge(this._value, targetToChange) : deepMerge(this._value, targetToChange))
-        this.fireWatchers()
+        this._fireWatchers()
         return this
     }
 
     //watcher are like callback function after the state updates
-    private fireWatchers() {
+    private _fireWatchers() {
         Object.keys(this._watchers).map(watcher => this._watchers[watcher]())
     }
 
@@ -106,6 +125,18 @@ export default class State<StateType = any> implements StateClass<StateType> {
     public isNot(value: any) {
         return this._value !== value
     }
+
+    //reset the values of the state from the history
+    public reset() {
+        this.set(this._history.initialValue)
+        return this
+    }
+
+    //undo the state change
+    public undo() {
+        this.set(this._history.previousState)
+        return this
+    }
 }
 
 //create a group of states
@@ -115,6 +146,12 @@ export function StateGroup(groups: Record<string, any>) {
         collection[state] = new State(groups[state])
     })
     return collection
+}
+
+function copy(value: any) {
+    if (typeof value === "object") return { ...value }
+    else if (Array.isArray(value)) return [...value]
+    return value
 }
 
 function shallowMerge(source, props) {
