@@ -8,7 +8,7 @@ interface StateClass<ValueType> {
     name: string
     key: (name: string) => this
     value: ValueType
-    set: (value: ValueType) => void | this
+    set: (value: ValueType | setStateFunc<ValueType>) => null | this
     exists: () => boolean
     patch: (patchableObject: Object) => this
     watch: (name: string, watcher: Function) => this
@@ -18,8 +18,10 @@ interface StateClass<ValueType> {
     isNot: (value: any) => boolean
 }
 
+type setStateFunc<ValueType> = (state: ValueType) => ValueType
+
 export default class State<StateType = any> implements StateClass<StateType> {
-    //this is the mehod to recognizes the state
+    //this is the method to recognizes the state
     public name: string
     //stores the value contained by the state
     private _value: StateType
@@ -39,14 +41,16 @@ export default class State<StateType = any> implements StateClass<StateType> {
     }
 
     //setter for the state value
-    public set(newState: StateType) {
+    public set(newState: StateType | setStateFunc<StateType>) {
         if (typeof newState !== typeof this._value) {
             console.log(`Incorrect type ${newState} was provided`)
-        } else {
-            this._value = newState
-            this.fireWatchers()
-            return this
+            return null
+        } else if (typeof newState === "function") {
+            newState = (newState as setStateFunc<StateType>)(this._value)
         }
+        this._value = newState as StateType
+        this.fireWatchers()
+        return this
     }
 
     //check the truthiness of the state
@@ -90,6 +94,11 @@ export default class State<StateType = any> implements StateClass<StateType> {
         return this
     }
 
+    // public toggle(){
+    //     if(typeof this._value === "boolean") this.set(!this._value)
+    //     return this
+    // }
+
     public is(value: any) {
         return this._value === value
     }
@@ -101,7 +110,7 @@ export default class State<StateType = any> implements StateClass<StateType> {
 
 //create a group of states
 export function StateGroup(groups: Record<string, any>) {
-    let collection = {}
+    let collection: Record<string, State>
     Object.keys(groups).forEach(state => {
         collection[state] = new State(groups[state])
     })
