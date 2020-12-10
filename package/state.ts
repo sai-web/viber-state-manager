@@ -16,6 +16,8 @@ interface StateClass<ValueType> {
     onNext: (NextFunc: Function) => this
     is: (value: any) => boolean
     isNot: (value: any) => boolean
+    reset: () => this
+    undo: () => this
 }
 
 type setStateFunc<ValueType> = (state: ValueType) => ValueType
@@ -34,7 +36,7 @@ export default class State<StateType = any> implements StateClass<StateType> {
     private _value: StateType
 
     //collection of function that will run after the state changes
-    private _watchers: Record<string, Function>
+    private _watchers: Record<string, Function> = {}
 
     //this the required history of the State
     private _history: InternalInformation<StateType>
@@ -53,11 +55,12 @@ export default class State<StateType = any> implements StateClass<StateType> {
 
     //setter for the state value
     public set(newState: StateType | setStateFunc<StateType>) {
+        if (typeof newState === "function") {
+            newState = (newState as setStateFunc<StateType>)(this._value)
+        }
         if (typeof newState !== typeof this._value) {
             console.log(`Incorrect type ${newState} was provided`)
             return null
-        } else if (typeof newState === "function") {
-            newState = (newState as setStateFunc<StateType>)(this._value)
         }
         let prevState = copy(this._value)
         this._value = newState as StateType
@@ -84,7 +87,7 @@ export default class State<StateType = any> implements StateClass<StateType> {
     //patch state objects together
     public patch(targetToChange, config: { deep?: boolean } = {}) {
         if (!(typeof this._value === 'object') || !(typeof targetToChange === "object")) return this
-        this.set(config.deep ? shallowMerge(this._value, targetToChange) : deepMerge(this._value, targetToChange))
+        this.set(config.deep ? deepMerge(this._value, targetToChange) : shallowMerge(this._value, targetToChange))
         this._fireWatchers()
         return this
     }
@@ -144,6 +147,7 @@ export function StateGroup(groups: Record<string, any>) {
     let collection: Record<string, State>
     Object.keys(groups).forEach(state => {
         collection[state] = new State(groups[state])
+        collection[state].key(state)
     })
     return collection
 }
