@@ -4,30 +4,7 @@
     note: you loose type checking when you use StateGroup
 */
 
-interface StateClass<ValueType> {
-    name: string
-    key: (name: string) => this
-    value: ValueType
-    set: (value: ValueType | setStateFunc<ValueType>) => null | this
-    exists: () => boolean
-    patch: (patchableObject: Object) => this
-    watch: (name: string, watcher: Function | Function[]) => this
-    removeWatcher: (name: string) => this
-    onNext: (NextFunc: Function) => this
-    is: (value: any) => boolean
-    isNot: (value: any) => boolean
-    reset: () => this
-    undo: () => this
-}
-
-type setStateFunc<ValueType> = (state: ValueType) => ValueType
-
-type InternalInformation<ValueType> = {
-    name?: string
-    value: ValueType
-    initialValue: ValueType
-    previousState: ValueType
-}
+import { StateClass, InternalInformation, setStateFunc } from './interfaces'
 
 export class State<StateType = any> implements StateClass<StateType> {
     //this is the method to recognizes the state
