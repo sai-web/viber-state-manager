@@ -11,7 +11,7 @@ interface StateClass<ValueType> {
     set: (value: ValueType | setStateFunc<ValueType>) => null | this
     exists: () => boolean
     patch: (patchableObject: Object) => this
-    watch: (name: string, watcher: Function) => this
+    watch: (name: string, watcher: Function | Function[]) => this
     removeWatcher: (name: string) => this
     onNext: (NextFunc: Function) => this
     is: (value: any) => boolean
@@ -36,7 +36,7 @@ export class State<StateType = any> implements StateClass<StateType> {
     protected _value: StateType
 
     //collection of function that will run after the state changes
-    private _watchers: Record<string, Function> = {}
+    public watchers: Record<string, Function | Function[]> = {}
 
     //this the required history of the State
     private _history: InternalInformation<StateType>
@@ -94,24 +94,34 @@ export class State<StateType = any> implements StateClass<StateType> {
 
     //watcher are like callback function after the state updates
     private _fireWatchers() {
-        Object.keys(this._watchers).map(watcher => this._watchers[watcher]())
+        Object.keys(this.watchers).map(watcher => {
+            if (typeof this.watchers[watcher] === "function") (this.watchers[watcher] as Function)()
+            else (this.watchers[watcher] as Function[]).forEach(watcher => {
+                watcher()
+            })
+        })
     }
 
-    public watch(name: string, watcher: Function) {
-        this._watchers[name] = watcher
+    public watch(name: string, watcher: Function | Function[]) {
+        this.watchers[name] = watcher
         return this
     }
 
     public removeWatcher(name: string) {
-        delete this._watchers[name]
+        delete this.watchers[name]
+        return this
+    }
+
+    public removeAllWatchers() {
+        this.watchers = {}
         return this
     }
 
     //onNext is a watcher that fires only once after the next state update
     public onNext(NextFunc: Function) {
-        this._watchers['_on_next_'] = () => {
+        this.watchers['_on_next_'] = () => {
             NextFunc()
-            delete this._watchers['_on_next_']
+            delete this.watchers['_on_next_']
         }
         return this
     }
@@ -132,6 +142,7 @@ export class State<StateType = any> implements StateClass<StateType> {
     //reset the values of the state from the history
     public reset() {
         this.set(this._history.initialValue)
+        this.removeAllWatchers()
         return this
     }
 
