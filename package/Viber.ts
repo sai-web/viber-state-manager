@@ -16,7 +16,7 @@ export class Viber {
     }
 
     //creates a new computed variable
-    public Compute<ComputedType>(computedFunc: () => ComputedType) {
-        return new Compute(computedFunc)
+    public Compute<ComputedType>(computedFunc: () => ComputedType, deps: State[]) {
+        return new Compute(computedFunc, deps)
     }
 }

@@ -17,8 +17,11 @@ export class Compute<ComputedType = any> extends State {
         console.error('The patch method cannot be called on computed values')
         return this
     }
-    constructor(public ComputeFunc: () => ComputedType) {
+    constructor(public ComputeFunc: () => ComputedType, public deps: State[]) {
         super(ComputeFunc())
+        deps.forEach(state => {
+            state.watch(this.name, this.recompute)
+        })
     }
 
     public compute() {
