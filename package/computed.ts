@@ -5,7 +5,7 @@ import { State } from './internal'
     this inherits the State class
 */
 
-export class Compute<ComputedValue = any> extends State {
+export class Compute<ComputedType = any> extends State {
     public get value() {
         return this._value
     }
@@ -17,7 +17,7 @@ export class Compute<ComputedValue = any> extends State {
         console.error('The patch method cannot be called on computed values')
         return this
     }
-    constructor(public ComputeFunc: () => ComputedValue) {
+    constructor(public ComputeFunc: () => ComputedType) {
         super(ComputeFunc())
     }
 

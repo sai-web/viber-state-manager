@@ -1,5 +1,5 @@
 /*
-    the State class is a default export
+    the State class is a named export 
     the StateGroup is a named export : allows you to pass an object of [key:string]:any and retrieve an object of states
     note: you loose type checking when you use StateGroup
 */
@@ -29,11 +29,11 @@ type InternalInformation<ValueType> = {
     previousState: ValueType
 }
 
-export default class State<StateType = any> implements StateClass<StateType> {
+export class State<StateType = any> implements StateClass<StateType> {
     //this is the method to recognizes the state
     public name: string
     //stores the value contained by the state
-    private _value: StateType
+    protected _value: StateType
 
     //collection of function that will run after the state changes
     private _watchers: Record<string, Function> = {}
@@ -59,7 +59,7 @@ export default class State<StateType = any> implements StateClass<StateType> {
             newState = (newState as setStateFunc<StateType>)(this._value)
         }
         if (typeof newState !== typeof this._value) {
-            console.log(`Incorrect type ${newState} was provided`)
+            console.error(`Incorrect type ${newState} was provided`)
             return null
         }
         let prevState = copy(this._value)

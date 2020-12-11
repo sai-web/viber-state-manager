@@ -1,4 +1,4 @@
-import State, { StateGroup } from './state'
+import { State, StateGroup, Compute } from './internal'
 
 export class Viber {
     constructor() {
@@ -13,5 +13,10 @@ export class Viber {
     //creates a group of states without type checking
     public StateGroup(states: Record<string, any>) {
         return StateGroup(states)
+    }
+
+    //creates a new computed variable
+    public Compute<ComputedType>(computedFunc: () => ComputedType) {
+        return new Compute(computedFunc)
     }
 }
