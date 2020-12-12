@@ -48,7 +48,7 @@ export class State<StateType = any> implements StateClass<StateType> {
     }
 
     //check the truthiness of the state
-    public exists() {
+    public get exists() {
         return !!this.value
     }
 
