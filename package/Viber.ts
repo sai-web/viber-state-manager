@@ -1,18 +1,21 @@
 import { State, StateGroup, Compute, Event, Collection } from './internal'
-import { EventConfig, CollectionConfigOptions } from './interfaces'
+import { EventConfig, CollectionConfigOptions, ControllerConfig } from './interfaces'
+import { Controller } from './controller'
 
 export class Viber {
     private _states: State[]
     private _computes: Compute[]
     private _events: Event[]
     private _collections: Collection<Record<string, any>>[]
+    private _controllers: Controller[]
 
     public get root() {
         return {
             states: this._states,
             computes: this._computes,
             events: this._events,
-            collections: this._collections
+            collections: this._collections,
+            controllers: this._controllers
         }
     }
 
@@ -51,5 +54,12 @@ export class Viber {
         const collection = new Collection(config)
         this._collections.push(collection)
         return collection
+    }
+
+    //create a controller
+    public Controller(config: ControllerConfig) {
+        const controller = new Controller(config)
+        this._controllers.push(controller)
+        return controller
     }
 }
