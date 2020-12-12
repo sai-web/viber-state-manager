@@ -11,7 +11,7 @@ export class Collection<DataType>{
     private _config: CollectionConfigOptions<DataType>
     private _data: Record<PrimaryKey, DataType>
 
-    private _groups: Group<DataType>[]
+    private _groups: Record<string, Group<DataType>>
 
     constructor(config: (instance: Collection<DataType>) => CollectionConfigOptions<DataType>) {
         if (typeof config === "function") this._config = config(this)
@@ -28,8 +28,26 @@ export class Collection<DataType>{
         const keys = Object.keys(this._config.groups)
         keys.forEach(group => {
             if (!this._config.groups[group].name) this._config.groups[group].key(group)
-            if (!this._groups[group]) this._config.groups[group]
+            if (!this._groups[group]) this._groups[group] = this._config.groups[group]
         })
+    }
+
+    public collect(items: DataType | DataType[], groups: string | string[]) {
+        if (!Array.isArray(items)) items = [items]
+        if (!Array.isArray(groups)) groups = [groups]
+        groups.forEach(group => {
+            this._groups[group].add(items[this._config.primaryKey])
+        })
+    }
+
+    public shiftGroups(keys: PrimaryKey | PrimaryKey[], removalGroup: Group<DataType>, recieverGroup: Group<DataType>) {
+        if (!Array.isArray(keys)) keys = [keys]
+        removalGroup.remove(keys)
+        recieverGroup.add(keys)
+    }
+
+    public getGroups() {
+        return this._groups
     }
 
     public getDataFromKeys(indexes: PrimaryKey[]): NonNullable<DataType[]> {
@@ -39,10 +57,14 @@ export class Collection<DataType>{
         return requiredData
     }
 
-    public removeData(indexes: PrimaryKey[]) {
-        indexes.forEach(index => {
-            delete this._data[index]
-        })
+    public removeData(indexes: PrimaryKey | PrimaryKey[]) {
+        if (Array.isArray(indexes)) {
+            indexes.forEach(index => {
+                delete this._data[index]
+            })
+        } else {
+            delete this._data[indexes]
+        }
         return;
     }
 }

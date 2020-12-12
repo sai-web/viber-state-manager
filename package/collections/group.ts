@@ -20,25 +20,39 @@ export class Group<DataType> extends State<PrimaryKey[]>{
         this._data = collection.getDataFromKeys(initalIndex)
     }
 
-    public add(indexes: PrimaryKey[]) {
-        indexes.forEach(index => {
-            if (!(index in this._indexes)) {
-                this._indexes.push(index)
-            }
-        })
-        this.collection.getDataFromKeys(indexes).forEach(data => {
-            this._data.push(data)
-        })
+    public add(indexes: PrimaryKey | PrimaryKey[]) {
+        if (Array.isArray(indexes)) {
+            indexes.forEach(index => {
+                if (!(index in this._indexes)) {
+                    this._indexes.push(index)
+                }
+            })
+            this.collection.getDataFromKeys(indexes).forEach(data => {
+                this._data.push(data)
+            })
+        } else {
+            this._indexes.push(indexes)
+            this.collection.getDataFromKeys([indexes]).forEach(data => {
+                this._data.push(data)
+            })
+        }
         return;
     }
 
-    public remove(indexes: PrimaryKey[]) {
-        indexes.forEach(index => {
-            if (index in this._indexes) {
-                delete this._indexes[index]
-                delete this._data[index]
+    public remove(indexes: PrimaryKey | PrimaryKey[]) {
+        if (Array.isArray(indexes)) {
+            indexes.forEach(index => {
+                if (index in this._indexes) {
+                    delete this._indexes[index]
+                    delete this._data[index]
+                }
+            })
+        } else {
+            if (indexes in this._indexes) {
+                delete this._indexes[indexes]
+                delete this._data[indexes]
             }
-        })
+        }
         return;
     }
 }
