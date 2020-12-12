@@ -28,7 +28,7 @@ export class Group<DataType> extends State<PrimaryKey[]>{
                 this.collection.getDataFromKeys([index]).forEach(data => this._data.push(data))
             }
         })
-        return;
+        return this;
     }
 
     public remove(indexes: PrimaryKey | PrimaryKey[]) {
@@ -39,6 +39,12 @@ export class Group<DataType> extends State<PrimaryKey[]>{
                 this._data = this._data.filter(item => (item[this.primaryKey] !== index))
             }
         })
-        return;
+        return this;
+    }
+
+    public reset() {
+        this._data = []
+        this._indexes = []
+        return this
     }
 }

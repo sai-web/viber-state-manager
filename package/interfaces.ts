@@ -38,3 +38,16 @@ export interface CollectionConfigOptions<DataType> {
     primaryKey?: string
     groups?: Record<string, Group<DataType>>
 }
+
+//types and interfaces for controllers
+import { State } from './state'
+import { Compute } from './computed'
+import { Collection } from './collections/collection'
+import { Event } from './event'
+export interface ControllerConfig {
+    name?: string
+    states?: Record<string, State | Compute>
+    collections?: Record<string, Collection<{ [key: string]: any }>>
+    actions?: Record<string, any>
+    events?: Record<string, Event>
+}

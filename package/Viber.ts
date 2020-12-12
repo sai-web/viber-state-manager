@@ -1,14 +1,30 @@
-import { State, StateGroup, Compute, Event } from './internal'
-import { EventConfig } from './interfaces'
+import { State, StateGroup, Compute, Event, Collection } from './internal'
+import { EventConfig, CollectionConfigOptions } from './interfaces'
 
 export class Viber {
+    private _states: State[]
+    private _computes: Compute[]
+    private _events: Event[]
+    private _collections: Collection<Record<string, any>>[]
+
+    public get root() {
+        return {
+            states: this._states,
+            computes: this._computes,
+            events: this._events,
+            collections: this._collections
+        }
+    }
+
     constructor() {
 
     }
 
     //create a new state variable
     public State<StateType>(value: StateType) {
-        return new State<StateType>(value)
+        const state = new State<StateType>(value)
+        this._states.push(state)
+        return state
     }
 
     //creates a group of states without type checking
@@ -18,11 +34,22 @@ export class Viber {
 
     //creates a new computed variable
     public Compute<ComputedType>(computedFunc: () => ComputedType, deps: State[]) {
-        return new Compute(computedFunc, deps)
+        const compute = new Compute(computedFunc, deps)
+        this._computes.push(compute)
+        return compute
     }
 
     //creates a new Event emitter
     public Event(config: EventConfig = { active: true }) {
-        return new Event(config)
+        const event = new Event(config)
+        this._events.push(event)
+        return event
+    }
+
+    //create a collection
+    public Collection<DataType>(config: (instance: Collection<DataType>) => CollectionConfigOptions<DataType>) {
+        const collection = new Collection(config)
+        this._collections.push(collection)
+        return collection
     }
 }

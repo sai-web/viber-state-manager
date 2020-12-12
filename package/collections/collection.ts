@@ -37,12 +37,14 @@ export class Collection<DataType>{
         items.forEach(item => {
             this._data[item[this._config.primaryKey]] = item
         })
+        return this
     }
 
     public shiftGroups(keys: PrimaryKey | PrimaryKey[], removalGroup: Group<DataType>, recieverGroup: Group<DataType>) {
         if (!Array.isArray(keys)) keys = [keys]
         removalGroup.remove(keys)
         recieverGroup.add(keys)
+        return this
     }
 
     public getGroups() {
@@ -64,6 +66,14 @@ export class Collection<DataType>{
         } else {
             delete this._data[indexes]
         }
-        return;
+        return this;
+    }
+
+    public reset() {
+        this._data = {}
+        Object.values(this._groups).forEach(group => {
+            group.reset()
+        })
+        return this
     }
 }
