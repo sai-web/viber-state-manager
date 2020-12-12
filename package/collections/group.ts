@@ -20,13 +20,15 @@ export class Group<DataType> extends State<PrimaryKey[]>{
         this._data = collection.getDataFromKeys(initalIndex)
     }
 
-    public add(index: PrimaryKey) {
-        if (!(index in this._indexes)) {
-            this._indexes.push(index)
-            this.collection.getDataFromKeys([index]).forEach(data => {
-                this._data.push(data)
-            })
-        }
+    public add(indexes: PrimaryKey[]) {
+        indexes.forEach(index => {
+            if (!(index in this._indexes)) {
+                this._indexes.push(index)
+            }
+        })
+        this.collection.getDataFromKeys(indexes).forEach(data => {
+            this._data.push(data)
+        })
         return;
     }
 
