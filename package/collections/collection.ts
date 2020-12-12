@@ -21,7 +21,7 @@ export class Collection<DataType>{
     }
 
     public Group() {
-        return new Group<DataType>(this)
+        return new Group<DataType>(this, [], {}, this._config.primaryKey)
     }
 
     private _initializeGroups() {
@@ -36,7 +36,10 @@ export class Collection<DataType>{
         if (!Array.isArray(items)) items = [items]
         if (!Array.isArray(groups)) groups = [groups]
         groups.forEach(group => {
-            this._groups[group].add(items[this._config.primaryKey])
+            this._groups[group].add((items as DataType[]).map(item => (item[this._config.primaryKey])))
+        })
+        items.forEach(item => {
+            this._data[item[this._config.primaryKey]] = item
         })
     }
 
