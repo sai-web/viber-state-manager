@@ -4,7 +4,7 @@ export interface StateClass<ValueType> {
     key: (name: string) => this
     value: ValueType
     set: (value: ValueType | setStateFunc<ValueType>) => null | this
-    exists: () => boolean
+    exists: boolean
     patch: (patchableObject: Object) => this
     watch: (name: string, watcher: Function | Function[]) => this
     removeWatcher: (name: string) => this
