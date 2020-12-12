@@ -1,9 +1,5 @@
 import { Group } from '../internal'
-
-interface CollectionConfigOptions<DataType> {
-    primaryKey?: string
-    groups?: Record<string, Group<DataType>>
-}
+import { CollectionConfigOptions } from '../interfaces'
 
 type PrimaryKey = string | number
 

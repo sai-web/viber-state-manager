@@ -31,3 +31,10 @@ export interface EventConfig {
     active: boolean
     disableAfterUses?: number
 }
+
+//types and interfaces for collections
+import { Group } from './internal'
+export interface CollectionConfigOptions<DataType> {
+    primaryKey?: string
+    groups?: Record<string, Group<DataType>>
+}
