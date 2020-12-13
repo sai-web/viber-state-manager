@@ -1,5 +1,6 @@
 /*
-    coming soon in version 1.0.1
+    Controllers are a collection of all states,computations,collections,actions etc
+    this allows you to write more modular code
 */
 
 import { ControllerConfig } from "./interfaces";

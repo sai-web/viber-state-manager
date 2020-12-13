@@ -1,5 +1,10 @@
 import { State, Collection } from '../internal'
 
+/*
+    Groups allow you to categorize data into certain types
+    data redundancy will not occur as we only store the primary keys and not the whole item
+*/
+
 type PrimaryKey = string | number
 
 export class Group<DataType> extends State<PrimaryKey[]>{

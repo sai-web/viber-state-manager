@@ -2,6 +2,11 @@ import { State, StateGroup, Compute, Event, Collection } from './internal'
 import { EventConfig, CollectionConfigOptions, ControllerConfig } from './interfaces'
 import { Controller } from './controller'
 
+/*
+    this class allows you to initiate all the facilities we provide
+    sooner we will implement a tracking mechanism to track the state of the compiler as well
+*/
+
 export class Viber {
     private _states: State[]
     private _computes: Compute[]

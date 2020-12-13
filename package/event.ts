@@ -1,5 +1,10 @@
 import { EventConfig } from './interfaces'
 
+/*
+    Events allow to fire certain incidents
+    because this will run globally throughout the application these events will be registered across all components
+*/
+
 export class Event {
     private _callbacks: Function[]
     private _uses: number

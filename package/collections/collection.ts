@@ -1,6 +1,11 @@
 import { Group } from '../internal'
 import { CollectionConfigOptions } from '../interfaces'
 
+/*
+    Collections will operate as temporary databases that collect states
+    they can associate data to groups
+*/
+
 type PrimaryKey = string | number
 
 export class Collection<DataType>{
