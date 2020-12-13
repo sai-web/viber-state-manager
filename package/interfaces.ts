@@ -40,6 +40,7 @@ export interface CollectionConfigOptions<DataType> {
 }
 
 //types and interfaces for controllers
+import { Viber } from './Viber'
 import { State } from './state'
 import { Compute } from './computed'
 import { Collection } from './collections/collection'
@@ -48,6 +49,6 @@ export interface ControllerConfig {
     name?: string
     states?: Record<string, State | Compute>
     collections?: Record<string, Collection<{ [key: string]: any }>>
-    actions?: Record<string, any>
+    actions?: Record<string, Function>
     events?: Record<string, Event>
 }

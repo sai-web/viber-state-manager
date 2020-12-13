@@ -49,6 +49,19 @@ export class Controller {
         })
     }
 
+    public get state() {
+        return this.states
+    }
+    public get collection() {
+        return this.collections
+    }
+    public get event() {
+        return this.events
+    }
+    public get action() {
+        return this.actions
+    }
+
     public reset() {
         Object.values(this.states).forEach(state => {
             state.reset()

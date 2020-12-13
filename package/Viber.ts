@@ -61,6 +61,11 @@ export class Viber {
         return collection
     }
 
+    //create an action
+    public Action(func: Function) {
+        return () => (func(this))
+    }
+
     //create a controller
     public Controller(config: ControllerConfig) {
         const controller = new Controller(config)
