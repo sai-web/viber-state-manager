@@ -50,4 +50,14 @@ export interface ControllerConfig {
     collections?: Record<string, Collection<{ [key: string]: any }>>
     actions?: Record<string, Function>
     events?: Record<string, Event>
+    routes?: Record<string, Function>
+}
+
+//types and interfaces for api
+export interface ApiConfig {
+    options: RequestInit
+    base?: string
+    path?: string
+    requestIntercept?: Function
+    responseIntercept?: Function
 }

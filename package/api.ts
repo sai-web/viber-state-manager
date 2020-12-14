@@ -2,14 +2,7 @@
     custom api where you can declare a configuration and proceed with api calls
     it is based of the fetch api hence follows the same protocols
 */
-
-interface ApiConfig {
-    options: RequestInit
-    base?: string
-    path?: string
-    requestIntercept?: Function
-    responseIntercept?: Function
-}
+import { ApiConfig } from './interfaces'
 
 function ensureProperHeaders(headers: Record<string, any>) {
     let newHeaders = {}

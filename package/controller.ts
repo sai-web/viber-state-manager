@@ -11,6 +11,7 @@ export class Controller {
     public collections: Record<string, Collection<Record<string, any>>>
     public events: Record<string, Event>
     public actions: Record<string, any>
+    public routes: Record<string, Function>
 
     public root() {
         return {
@@ -26,6 +27,7 @@ export class Controller {
         if (config.collections) this.initializeCollections()
         if (config.events) this.initializeEvents()
         if (config.actions) this.initializeActions()
+        if (config.routes) this.initializeRoutes()
     }
 
     private initializeStates() {
@@ -49,6 +51,12 @@ export class Controller {
         })
     }
 
+    private initializeRoutes() {
+        Object.keys(this.config.routes).forEach(route => {
+            this.routes[route] = this.config.routes[route]
+        })
+    }
+
     public get state() {
         return this.states
     }
@@ -60,6 +68,9 @@ export class Controller {
     }
     public get action() {
         return this.actions
+    }
+    public get route() {
+        return this.routes
     }
 
     public reset() {

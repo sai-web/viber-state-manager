@@ -1,5 +1,5 @@
-import { State, StateGroup, Compute, Event, Collection } from './internal'
-import { EventConfig, CollectionConfigOptions, ControllerConfig } from './interfaces'
+import { State, StateGroup, Compute, Event, Collection, Api } from './internal'
+import { EventConfig, CollectionConfigOptions, ControllerConfig, ApiConfig } from './interfaces'
 import { Controller } from './controller'
 
 /*
@@ -71,5 +71,10 @@ export class Viber {
         const controller = new Controller(config)
         this._controllers.push(controller)
         return controller
+    }
+
+    //create an api instance
+    public Api(config: ApiConfig) {
+        return new Api(config)
     }
 }
