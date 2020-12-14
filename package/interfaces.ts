@@ -40,7 +40,6 @@ export interface CollectionConfigOptions<DataType> {
 }
 
 //types and interfaces for controllers
-import { Viber } from './Viber'
 import { State } from './state'
 import { Compute } from './computed'
 import { Collection } from './collections/collection'
